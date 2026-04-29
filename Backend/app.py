@@ -23,10 +23,9 @@ from fastapi import FastAPI, HTTPException, Depends, status, UploadFile, File, F
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from sqlalchemy import create_engine, Column, String, Text, DateTime, ForeignKey, Boolean, Integer
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session, relationship
+from sqlalchemy.orm import sessionmaker, Session, relationship, declarative_base
 from passlib.context import CryptContext
 import jwt
 
@@ -130,8 +129,7 @@ class UserResponse(UserBase):
     avatar_url: Optional[str] = None
     created_at: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class Token(BaseModel):
     access_token: str
@@ -153,8 +151,7 @@ class ColumnResponse(ColumnCreate):
     created_at: datetime
     tasks: List["TaskResponse"] = []
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class TagCreate(BaseModel):
     name: str
@@ -163,8 +160,7 @@ class TagCreate(BaseModel):
 class TagResponse(TagCreate):
     id: str
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class TaskCreate(BaseModel):
     title: str
@@ -195,8 +191,7 @@ class TaskResponse(BaseModel):
     tags: List[TagResponse] = []
     attachments: List["AttachmentResponse"] = []
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class AttachmentResponse(BaseModel):
     id: str
@@ -207,8 +202,7 @@ class AttachmentResponse(BaseModel):
     file_size: Optional[int] = None
     uploaded_at: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class FilterRequest(BaseModel):
     tag_ids: Optional[List[str]] = None
@@ -857,4 +851,4 @@ seed_initial_data()
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
